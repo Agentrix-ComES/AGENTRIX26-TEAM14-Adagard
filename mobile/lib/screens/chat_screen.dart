@@ -86,26 +86,23 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     final s = AppStrings.of(_lang);
-    final scheme = Theme.of(context).colorScheme;
     // +1 row for the typing indicator while a request is in flight.
     final itemCount = _msgs.length + (_sending ? 1 : 0);
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: scheme.primary,
-        foregroundColor: scheme.onPrimary,
-        title: Text(s.appTitle),
-        actions: [
-          LanguageSelector(value: _lang, onChanged: (v) => setState(() => _lang = v)),
-        ],
+      backgroundColor: const Color(0xFFF0F4F8),
+      appBar: _GovAppBar(
+        s: s,
+        lang: _lang,
+        onLangChanged: (v) => setState(() => _lang = v),
       ),
       body: Column(children: [
         Expanded(
           child: _msgs.isEmpty && !_sending
-              ? _EmptyState(s: s)
+              ? _EmptyState(s: s, onSuggest: _send)
               : ListView.builder(
                   controller: _scroll,
-                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                   itemCount: itemCount,
                   itemBuilder: (_, i) {
                     if (i >= _msgs.length) {
@@ -135,23 +132,181 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 }
 
-class _EmptyState extends StatelessWidget {
+/// Gradient AppBar with GovPath branding.
+class _GovAppBar extends StatelessWidget implements PreferredSizeWidget {
   final AppStrings s;
-  const _EmptyState({required this.s});
+  final String lang;
+  final ValueChanged<String> onLangChanged;
+
+  const _GovAppBar({
+    required this.s,
+    required this.lang,
+    required this.onLangChanged,
+  });
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Icon(Icons.account_balance, size: 64, color: scheme.primary.withValues(alpha: 0.6)),
-          const SizedBox(height: 16),
-          Text(s.welcome,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, color: scheme.onSurfaceVariant, height: 1.4)),
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      foregroundColor: Colors.white,
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      flexibleSpace: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF173A5A), Color(0xFF1F4E79), Color(0xFF2C6AA0)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+      ),
+      title: Row(children: [
+        Container(
+          padding: const EdgeInsets.all(7),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+          ),
+          child: const Icon(Icons.account_balance, size: 16, color: Colors.white),
+        ),
+        const SizedBox(width: 10),
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(s.appTitle,
+              style: const TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold, fontSize: 17, height: 1.1)),
+          const Text('Sri Lanka Gov Services',
+              style: TextStyle(
+                  color: Colors.white60, fontSize: 10, fontWeight: FontWeight.w400, height: 1.1)),
         ]),
+      ]),
+      actions: [
+        LanguageSelector(value: lang, onChanged: onLangChanged),
+      ],
+    );
+  }
+}
+
+/// Welcome screen with GovPath branding + suggestion chips.
+class _EmptyState extends StatelessWidget {
+  final AppStrings s;
+  final void Function(String) onSuggest;
+  const _EmptyState({required this.s, required this.onSuggest});
+
+  static const _suggestions = [
+    ('I need a new NIC', Icons.credit_card_outlined),
+    ('Apply for passport', Icons.book_outlined),
+    ('GN certificate', Icons.workspace_premium_outlined),
+    ('Birth certificate', Icons.child_care_outlined),
+    ('Driving license', Icons.drive_eta_outlined),
+    ('Death certificate', Icons.assignment_outlined),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 40),
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        // Logo
+        Container(
+          padding: const EdgeInsets.all(22),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF1F4E79), Color(0xFF2C6AA0)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF1F4E79).withValues(alpha: 0.35),
+                blurRadius: 24,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: const Icon(Icons.account_balance, size: 52, color: Colors.white),
+        ),
+        const SizedBox(height: 24),
+        const Text('GovPath',
+            style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF173A5A),
+                letterSpacing: -0.5)),
+        const SizedBox(height: 6),
+        // Gold accent line
+        Container(width: 40, height: 3, decoration: BoxDecoration(
+          gradient: const LinearGradient(colors: [Color(0xFFC8A04F), Color(0xFFE8C06A)]),
+          borderRadius: BorderRadius.circular(2),
+        )),
+        const SizedBox(height: 16),
+        Text(s.welcome,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+                fontSize: 14, color: Color(0xFF64748B), height: 1.6)),
+        const SizedBox(height: 32),
+        // Section label
+        const Align(
+          alignment: Alignment.centerLeft,
+          child: Text('Quick start',
+              style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF94A3B8),
+                  letterSpacing: 0.8)),
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: _suggestions
+              .map((t) => _SuggestionChip(
+                  label: t.$1, icon: t.$2, onTap: () => onSuggest(t.$1)))
+              .toList(),
+        ),
+      ]),
+    );
+  }
+}
+
+class _SuggestionChip extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final VoidCallback onTap;
+  const _SuggestionChip({required this.label, required this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(22),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(22),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: const Color(0xFF1F4E79).withValues(alpha: 0.2)),
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2)),
+            ],
+          ),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            Icon(icon, size: 15, color: const Color(0xFF1F4E79)),
+            const SizedBox(width: 7),
+            Text(label,
+                style: const TextStyle(
+                    fontSize: 13, color: Color(0xFF1F4E79), fontWeight: FontWeight.w500)),
+          ]),
+        ),
       ),
     );
   }
@@ -193,44 +348,78 @@ class _Composer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return SafeArea(
       top: false,
       child: Container(
-        padding: const EdgeInsets.fromLTRB(12, 8, 8, 8),
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
         decoration: BoxDecoration(
-          color: scheme.surface,
-          border: Border(top: BorderSide(color: scheme.outlineVariant)),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 16,
+              offset: const Offset(0, -3),
+            ),
+          ],
         ),
         child: Row(children: [
           Expanded(
-            child: TextField(
-              controller: controller,
-              enabled: enabled,
-              minLines: 1,
-              maxLines: 4,
-              textInputAction: TextInputAction.send,
-              onSubmitted: (_) => onSend(),
-              decoration: InputDecoration(
-                hintText: hint,
-                isDense: true,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide(color: scheme.outlineVariant),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide(color: scheme.outlineVariant),
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFFF1F5F9),
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+              ),
+              child: TextField(
+                controller: controller,
+                enabled: enabled,
+                minLines: 1,
+                maxLines: 4,
+                textInputAction: TextInputAction.send,
+                onSubmitted: (_) => onSend(),
+                style: const TextStyle(fontSize: 15, color: Color(0xFF1E293B)),
+                decoration: InputDecoration(
+                  hintText: hint,
+                  hintStyle: const TextStyle(color: Color(0xFF94A3B8), fontSize: 15),
+                  isDense: true,
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 18, vertical: 13),
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
                 ),
               ),
             ),
           ),
-          const SizedBox(width: 4),
-          IconButton.filled(
-            icon: const Icon(Icons.send),
-            onPressed: enabled ? () => onSend() : null,
-            tooltip: 'Send',
+          const SizedBox(width: 10),
+          GestureDetector(
+            onTap: enabled ? () => onSend() : null,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: 46,
+              height: 46,
+              decoration: BoxDecoration(
+                gradient: enabled
+                    ? const LinearGradient(
+                        colors: [Color(0xFF1F4E79), Color(0xFF2C6AA0)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      )
+                    : null,
+                color: enabled ? null : const Color(0xFFCBD5E1),
+                shape: BoxShape.circle,
+                boxShadow: enabled
+                    ? [
+                        BoxShadow(
+                          color: const Color(0xFF1F4E79).withValues(alpha: 0.4),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ]
+                    : [],
+              ),
+              child: const Icon(Icons.send_rounded, color: Colors.white, size: 20),
+            ),
           ),
         ]),
       ),

@@ -14,63 +14,101 @@ class PlanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Card(
-      elevation: 0,
-      color: scheme.surface,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: scheme.outlineVariant),
-        borderRadius: BorderRadius.circular(16),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF1F4E79).withValues(alpha: 0.12),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(children: [
-              Icon(Icons.assignment_turned_in, color: scheme.primary, size: 20),
-              const SizedBox(width: 8),
-              Text(s.planTitle,
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: scheme.primary)),
-            ]),
-            const SizedBox(height: 12),
-            if (_has(plan.office))
-              _InfoRow(icon: Icons.location_city, label: s.office, value: plan.office!),
-            if (_has(plan.officer))
-              _InfoRow(icon: Icons.badge_outlined, label: s.officer, value: plan.officer!),
-            if (plan.checklist.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              _SectionHeader(icon: Icons.checklist, title: s.checklist),
-              const SizedBox(height: 4),
-              ...plan.checklist.map((c) => _ChecklistItem(text: c)),
-            ],
-            if (plan.forms.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              _SectionHeader(icon: Icons.description_outlined, title: s.forms),
-              const SizedBox(height: 6),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: plan.forms
-                    .map((f) => _FormChip(form: f, openLabel: s.openForm, linkError: s.linkError))
-                    .toList(),
+            // Gradient header
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF173A5A), Color(0xFF1F4E79)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
               ),
-            ],
-            if (plan.draftDocs.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              _SectionHeader(icon: Icons.article_outlined, title: s.draftDocs),
-              const SizedBox(height: 4),
-              ...plan.draftDocs.map((d) => _DraftDocTile(doc: d)),
-            ],
-            if (plan.citations.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              _SectionHeader(icon: Icons.menu_book_outlined, title: s.citations),
-              const SizedBox(height: 4),
-              ...plan.citations.map((c) => _CitationItem(citation: c, linkError: s.linkError)),
-            ],
+              child: Row(children: [
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.assignment_turned_in,
+                      color: Color(0xFFC8A04F), size: 18),
+                ),
+                const SizedBox(width: 10),
+                Text(s.planTitle,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        letterSpacing: 0.2)),
+              ]),
+            ),
+
+            // Body
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (_has(plan.office))
+                    _InfoRow(icon: Icons.location_city_outlined, label: s.office, value: plan.office!),
+                  if (_has(plan.officer))
+                    _InfoRow(icon: Icons.badge_outlined, label: s.officer, value: plan.officer!),
+                  if (plan.checklist.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    _SectionHeader(icon: Icons.checklist_rounded, title: s.checklist),
+                    const SizedBox(height: 8),
+                    ...plan.checklist.asMap().entries.map((e) =>
+                        _ChecklistItem(text: e.value, index: e.key + 1)),
+                  ],
+                  if (plan.forms.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    _SectionHeader(icon: Icons.description_outlined, title: s.forms),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: plan.forms
+                          .map((f) => _FormChip(
+                              form: f,
+                              openLabel: s.openForm,
+                              linkError: s.linkError))
+                          .toList(),
+                    ),
+                  ],
+                  if (plan.draftDocs.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    _SectionHeader(icon: Icons.article_outlined, title: s.draftDocs),
+                    const SizedBox(height: 8),
+                    ...plan.draftDocs.map((d) => _DraftDocTile(doc: d)),
+                  ],
+                  if (plan.citations.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    _SectionHeader(icon: Icons.menu_book_outlined, title: s.citations),
+                    const SizedBox(height: 8),
+                    ...plan.citations.map((c) =>
+                        _CitationItem(citation: c, linkError: s.linkError)),
+                  ],
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -88,22 +126,34 @@ class _InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Icon(icon, size: 18, color: scheme.onSurfaceVariant),
-        const SizedBox(width: 8),
+        Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: const Color(0xFFEEF4FB),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, size: 16, color: const Color(0xFF1F4E79)),
+        ),
+        const SizedBox(width: 10),
         Expanded(
-          child: RichText(
-            text: TextSpan(
-              style: DefaultTextStyle.of(context).style,
-              children: [
-                TextSpan(
-                    text: '$label: ',
-                    style: const TextStyle(fontWeight: FontWeight.w600)),
-                TextSpan(text: value),
-              ],
+          child: Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: RichText(
+              text: TextSpan(
+                style: DefaultTextStyle.of(context).style,
+                children: [
+                  TextSpan(
+                      text: '$label: ',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600, color: Color(0xFF374151))),
+                  TextSpan(
+                      text: value,
+                      style: const TextStyle(color: Color(0xFF4B5563))),
+                ],
+              ),
             ),
           ),
         ),
@@ -119,36 +169,46 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return Row(children: [
-      Icon(icon, size: 16, color: scheme.primary),
+      Icon(icon, size: 15, color: const Color(0xFF1F4E79)),
       const SizedBox(width: 6),
       Text(title,
-          style: TextStyle(
+          style: const TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 13,
-              color: scheme.primary,
-              letterSpacing: 0.3)),
+              fontSize: 12,
+              color: Color(0xFF1F4E79),
+              letterSpacing: 0.6)),
     ]);
   }
 }
 
 class _ChecklistItem extends StatelessWidget {
   final String text;
-  const _ChecklistItem({required this.text});
+  final int index;
+  const _ChecklistItem({required this.text, required this.index});
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 2),
-          child: Icon(Icons.check_circle_outline, size: 16, color: scheme.primary),
+        Container(
+          width: 20,
+          height: 20,
+          decoration: BoxDecoration(
+            color: const Color(0xFF059669).withValues(alpha: 0.1),
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(Icons.check, size: 12, color: Color(0xFF059669)),
         ),
         const SizedBox(width: 8),
-        Expanded(child: Text(text, style: const TextStyle(height: 1.3))),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 1),
+            child: Text(text,
+                style: const TextStyle(height: 1.4, fontSize: 13, color: Color(0xFF374151))),
+          ),
+        ),
       ]),
     );
   }
@@ -163,17 +223,29 @@ class _FormChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     final hasUrl = form.url != null && form.url!.trim().isNotEmpty;
-    return ActionChip(
-      avatar: Icon(hasUrl ? Icons.download : Icons.insert_drive_file_outlined,
-          size: 16, color: scheme.onSecondaryContainer),
-      label: Text(hasUrl ? '${form.name} · $openLabel' : form.name),
-      backgroundColor: scheme.secondaryContainer,
-      labelStyle: TextStyle(color: scheme.onSecondaryContainer, fontSize: 12),
-      onPressed: hasUrl
-          ? () => _open(context, _resolve(form.url!), linkError)
-          : null,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: hasUrl ? () => _open(context, _resolve(form.url!), linkError) : null,
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: const Color(0xFFEEF4FB),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xFF1F4E79).withValues(alpha: 0.2)),
+          ),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            Icon(hasUrl ? Icons.download_outlined : Icons.insert_drive_file_outlined,
+                size: 15, color: const Color(0xFF1F4E79)),
+            const SizedBox(width: 6),
+            Text(hasUrl ? '${form.name} · $openLabel' : form.name,
+                style: const TextStyle(
+                    color: Color(0xFF1F4E79), fontSize: 12, fontWeight: FontWeight.w500)),
+          ]),
+        ),
+      ),
     );
   }
 }
@@ -185,32 +257,41 @@ class _CitationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     final hasSrc = citation.source != null && citation.source!.trim().isNotEmpty;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: InkWell(
-        onTap: hasSrc
-            ? () => _open(context, _resolve(citation.source!), linkError)
-            : null,
-        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 2),
-            child: Icon(Icons.link, size: 15, color: scheme.onSurfaceVariant),
+        onTap:
+            hasSrc ? () => _open(context, _resolve(citation.source!), linkError) : null,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: const Color(0xFFE2E8F0)),
           ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(citation.title, style: const TextStyle(fontSize: 13, height: 1.25)),
-              if (hasSrc)
-                Text(citation.source!,
-                    style: TextStyle(
-                        fontSize: 11,
-                        color: scheme.primary,
-                        decoration: TextDecoration.underline)),
-            ]),
-          ),
-        ]),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Padding(
+              padding: EdgeInsets.only(top: 2),
+              child: Icon(Icons.link, size: 14, color: Color(0xFF94A3B8)),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(citation.title,
+                    style: const TextStyle(
+                        fontSize: 12, height: 1.3, color: Color(0xFF374151))),
+                if (hasSrc)
+                  Text(citation.source!,
+                      style: const TextStyle(
+                          fontSize: 11,
+                          color: Color(0xFF2C6AA0),
+                          decoration: TextDecoration.underline)),
+              ]),
+            ),
+          ]),
+        ),
       ),
     );
   }
@@ -230,27 +311,30 @@ class _DraftDocTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4),
       decoration: BoxDecoration(
-        color: scheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(10),
+        color: const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
       ),
-      // Hide the default ExpansionTile divider lines for a cleaner card.
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
           dense: true,
           tilePadding: const EdgeInsets.symmetric(horizontal: 12),
           childrenPadding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-          leading: Icon(Icons.description_outlined, size: 18, color: scheme.primary),
+          leading: const Icon(Icons.description_outlined,
+              size: 18, color: Color(0xFF1F4E79)),
           title: Text(_prettyType,
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+              style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF1F4E79))),
           children: [
             SelectableText(
               doc.content,
-              style: const TextStyle(fontSize: 12, height: 1.35),
+              style: const TextStyle(fontSize: 12, height: 1.45, color: Color(0xFF374151)),
             ),
           ],
         ),
@@ -271,8 +355,8 @@ String _resolve(String raw) {
 Future<void> _open(BuildContext context, String url, String linkError) async {
   final messenger = ScaffoldMessenger.of(context);
   final uri = Uri.tryParse(url);
-  final ok = uri != null &&
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+  final ok =
+      uri != null && await launchUrl(uri, mode: LaunchMode.externalApplication);
   if (!ok) {
     messenger.showSnackBar(SnackBar(content: Text(linkError)));
   }
