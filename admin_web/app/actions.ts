@@ -47,6 +47,22 @@ export async function approve(formData: FormData): Promise<void> {
   revalidatePath("/");
 }
 
+export async function reject(formData: FormData): Promise<void> {
+  const id = String(formData.get("id"));
+  const reason = String(formData.get("reason") ?? "");
+  await apiFetch(`/verifications/${id}/reject`, {
+    method: "POST",
+    body: JSON.stringify({ reason }),
+  });
+  revalidatePath("/");
+}
+
+export async function saveAvailability(formData: FormData): Promise<void> {
+  const slots = JSON.parse(String(formData.get("slots") ?? "[]"));
+  await apiFetch("/officer/availability", { method: "POST", body: JSON.stringify(slots) });
+  revalidatePath("/officer/availability");
+}
+
 export async function createOfficer(_prev: FormState, formData: FormData): Promise<FormState> {
   const body: Record<string, unknown> = {
     nic: String(formData.get("nic") ?? "").trim(),

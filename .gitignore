@@ -1,2 +1,8 @@
 # Browser-test artifacts
 .playwright-mcp/
+
+# Node / Prisma tooling (repo-root db package)
+node_modules/
+/generated
+.env
+.agents/

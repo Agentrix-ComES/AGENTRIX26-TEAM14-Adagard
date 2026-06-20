@@ -36,6 +36,9 @@ def init_db() -> None:
     from app.models.chat import ChatSession, ChatMessage  # noqa: F401
     from app.models.verification import Verification  # noqa: F401
     from app.models.circular import CircularChunk  # noqa: F401
+    from app.models.request_flow import (  # noqa: F401
+        Request, Document, OfficerAvailability, Appointment, VerificationPacket,
+    )
 
     if IS_POSTGRES:
         with engine.begin() as conn:

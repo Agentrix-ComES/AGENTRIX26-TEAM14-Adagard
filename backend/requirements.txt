@@ -14,6 +14,7 @@ reportlab
 sqlmodel
 psycopg[binary]
 pgvector
+supabase
 bcrypt
 python-jose[cryptography]
 python-multipart

@@ -25,36 +25,87 @@ def chat(req: ChatRequest, citizen: User = Depends(require_citizen),
 
 def _packet_out(v: Verification) -> dict:
     return {
-        "id": v.vid,
-        "session_id": v.session_id,
-        "service": v.service,
-        "plan": v.plan,
-        "approved": v.approved,
-        "officer": v.officer_name,
+        "id": v.vid, "kind": "chat", "session_id": v.session_id, "service": v.service,
+        "plan": v.plan, "approved": v.approved, "officer": v.officer_name,
     }
+
+
+def _as_uuid(value: str):
+    import uuid
+    try:
+        return uuid.UUID(value)
+    except (ValueError, AttributeError):
+        return None
 
 
 @router.get("/verifications")
 def list_verifications(officer: User = Depends(require_officer),
                        db: Session = Depends(get_session)):
-    """Pending packets the officer is scoped to see (Super-Admin sees all)."""
-    rows = db.exec(select(Verification).where(Verification.approved == False)).all()  # noqa: E712
-    return [_packet_out(v) for v in rows if rbac.can_act(officer, v.service, v.office)]
+    """Unified, scoped officer queue: legacy chat packets + request-flow packets."""
+    from app.api.requests import assemble_packet
+    from app.models.request_flow import VerificationPacket, Request
+
+    out = [_packet_out(v) for v in
+           db.exec(select(Verification).where(Verification.approved == False)).all()  # noqa: E712
+           if rbac.can_act(officer, v.service, v.office)]
+    for p in db.exec(select(VerificationPacket).where(VerificationPacket.status == "ready")).all():
+        if rbac.can_act(officer, p.service, p.office):
+            req = db.get(Request, p.request_id)
+            if req:
+                d = assemble_packet(db, req)
+                d.update({"kind": "request", "packet_id": str(p.id),
+                          "approved": False, "officer": None})
+                out.append(d)
+    return out
 
 
 @router.post("/verifications/{vid}/approve")
 def approve(vid: str, officer: User = Depends(require_officer),
             db: Session = Depends(get_session), body: ApproveRequest | None = None):
-    v = db.exec(select(Verification).where(Verification.vid == vid)).first()
+    from app.models.request_flow import VerificationPacket, Request
+    uid = _as_uuid(vid)
+    p = db.get(VerificationPacket, uid) if uid else None
+    if p is not None:                                # request-flow packet
+        if not rbac.can_act(officer, p.service, p.office):
+            raise HTTPException(403, "packet is outside your service/jurisdiction")
+        p.status = "approved"; p.officer_id = officer.id; db.add(p)
+        req = db.get(Request, p.request_id)
+        if req:
+            req.status = "approved"; db.add(req)
+        db.commit()
+        return {"ok": True}
+
+    v = db.exec(select(Verification).where(Verification.vid == vid)).first()  # legacy chat packet
     if v is None:
         raise HTTPException(status_code=404, detail="verification not found")
     if not rbac.can_act(officer, v.service, v.office):
         raise HTTPException(status_code=403, detail="packet is outside your service/jurisdiction")
     v.approved = True
-    v.officer_name = officer.full_name          # server-trusted identity from the JWT
+    v.officer_name = officer.full_name
     v.officer_nic = officer.nic
     v.approved_at = datetime.now(timezone.utc)
-    db.add(v)
+    db.add(v); db.commit()
+    return {"ok": True}
+
+
+class RejectRequest(ApproveRequest):
+    reason: str = ""
+
+
+@router.post("/verifications/{vid}/reject")
+def reject(vid: str, body: RejectRequest, officer: User = Depends(require_officer),
+           db: Session = Depends(get_session)):
+    from app.models.request_flow import VerificationPacket, Request
+    uid = _as_uuid(vid)
+    p = db.get(VerificationPacket, uid) if uid else None
+    if p is None:
+        raise HTTPException(404, "verification not found")
+    if not rbac.can_act(officer, p.service, p.office):
+        raise HTTPException(403, "packet is outside your service/jurisdiction")
+    p.status = "rejected"; p.reject_reason = body.reason; p.officer_id = officer.id; db.add(p)
+    req = db.get(Request, p.request_id)
+    if req:
+        req.status = "rejected"; db.add(req)
     db.commit()
     return {"ok": True}
 

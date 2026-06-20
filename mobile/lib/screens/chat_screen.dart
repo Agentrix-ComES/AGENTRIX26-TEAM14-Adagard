@@ -6,6 +6,7 @@ import '../services/auth.dart';
 import '../theme.dart';
 import '../widgets/brand.dart';
 import 'auth_screen.dart';
+import 'request_screen.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -38,6 +39,7 @@ class _ChatScreenState extends State<ChatScreen> {
           'role': 'bot',
           'text': r['reply']?.toString() ?? '',
           'plan': r['plan'],
+          'service': r['service'],
         });
       });
     } on UnauthorizedException {
@@ -185,7 +187,26 @@ class _ChatScreenState extends State<ChatScreen> {
         if (plan != null)
           Padding(
             padding: const EdgeInsets.only(left: 32),
-            child: PlanCard(plan: plan),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                PlanCard(plan: plan),
+                if (msg['service'] != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: FilledButton.icon(
+                      onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => RequestScreen(
+                          service: msg['service'] as String,
+                          sessionId: _sessionId,
+                        ),
+                      )),
+                      icon: const Icon(Icons.upload_file, size: 18),
+                      label: const Text('Upload documents & apply'),
+                    ),
+                  ),
+              ],
+            ),
           ),
       ],
     );

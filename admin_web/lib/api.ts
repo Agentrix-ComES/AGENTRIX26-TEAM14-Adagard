@@ -53,3 +53,50 @@ export async function getMe(): Promise<Me | null> {
   const res = await apiFetch("/auth/me");
   return res.ok ? ((await res.json()) as Me) : null;
 }
+
+// --- Full agentic-flow packet (kind === "request") ---
+export type DocItem = {
+  id: string;
+  type: string | null;
+  filename: string | null;
+  signed_url: string | null;
+  status: string;
+  extracted: Record<string, unknown>;
+};
+export type RequestPacket = {
+  id: string;
+  kind: "request";
+  packet_id: string;
+  service: string;
+  status: string;
+  citizen: { name: string | null; nic: string | null };
+  plan: Plan & { required_documents?: { type: string; label: string; mandatory: boolean }[]; in_person_required?: boolean };
+  documents: DocItem[];
+  gap_check: { complete: boolean; missing: string[]; notes: string } | null;
+  generated_forms: { name: string; signed_url?: string | null; content?: string }[];
+  appointment: { slot_start: string; slot_end: string; officer: string } | null;
+  verification: {
+    confidence: number;
+    extracted_fields: Record<string, unknown>;
+    checks: { name: string; passed: boolean }[];
+    flags: string[];
+    summary: string;
+  } | null;
+  reject_reason: string | null;
+};
+export type ChatPacket = Packet & { kind: "chat" };
+export type QueueItem = ChatPacket | RequestPacket;
+
+export type AvailabilitySlot = {
+  day_of_week: number;
+  start_time: string;
+  end_time: string;
+  slot_minutes: number;
+};
+export type OfficerAppointment = {
+  id: string;
+  slot_start: string;
+  slot_end: string;
+  service: string | null;
+  citizen: string | null;
+};

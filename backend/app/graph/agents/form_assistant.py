@@ -91,10 +91,10 @@ def run(state: GraphState) -> GraphState:
     title = f"{form_name} — {info['label']}"
 
     if _render_pdf(pdf_path, title, fields, checklist):
-        url = f"/files/{base}.pdf"
+        url = f"/localforms/{base}.pdf"
     else:
         _render_txt(os.path.join(FILES_DIR, f"{base}.txt"), title, fields, checklist)
-        url = f"/files/{base}.txt"
+        url = f"/localforms/{base}.txt"
 
     state.setdefault("forms", []).append({"name": form_name, "url": url})
     return state

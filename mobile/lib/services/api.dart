@@ -32,4 +32,46 @@ class GovPathApi {
     }
     return jsonDecode(res.body) as Map<String, dynamic>;
   }
+
+  Future<Map<String, dynamic>> _post(String path, Map<String, dynamic> body) async {
+    final token = await _auth.token();
+    final res = await http.post(
+      Uri.parse('$kBaseUrl$path'),
+      headers: {
+        'Content-Type': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(body),
+    );
+    if (res.statusCode == 401) {
+      await _auth.logout();
+      throw UnauthorizedException();
+    }
+    return jsonDecode(res.body) as Map<String, dynamic>;
+  }
+
+  /// Create a request from a completed plan session (step 4 of the flow).
+  Future<Map<String, dynamic>> createRequest(String service, String? sessionId) =>
+      _post('/requests', {'service': service, 'session_id': sessionId});
+
+  /// Upload one document (image/pdf) to the request → Supabase bucket.
+  Future<Map<String, dynamic>> uploadDocument(
+      String requestId, String type, List<int> bytes, String filename) async {
+    final token = await _auth.token();
+    final req = http.MultipartRequest('POST', Uri.parse('$kBaseUrl/requests/$requestId/documents'));
+    if (token != null) req.headers['Authorization'] = 'Bearer $token';
+    req.fields['type'] = type;
+    req.files.add(http.MultipartFile.fromBytes('file', bytes, filename: filename));
+    final streamed = await req.send();
+    final text = await streamed.stream.bytesToString();
+    if (streamed.statusCode == 401) {
+      await _auth.logout();
+      throw UnauthorizedException();
+    }
+    return jsonDecode(text) as Map<String, dynamic>;
+  }
+
+  /// Finalise: gap-check → form/appointment → action → verifier packet.
+  Future<Map<String, dynamic>> submitRequest(String requestId) =>
+      _post('/requests/$requestId/submit', {});
 }

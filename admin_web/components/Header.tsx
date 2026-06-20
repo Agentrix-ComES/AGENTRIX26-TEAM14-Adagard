@@ -19,6 +19,18 @@ export default function Header({ me }: { me: Me }) {
         </Link>
 
         <div className="flex items-center gap-5">
+          <Link
+            href="/"
+            className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted transition-colors hover:text-garnet"
+          >
+            Queue
+          </Link>
+          <Link
+            href="/officer/availability"
+            className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted transition-colors hover:text-garnet"
+          >
+            Schedule
+          </Link>
           {me.can_manage_users && (
             <Link
               href="/admin/officers"

@@ -1,16 +1,17 @@
 // Verification queue — scoped to the signed-in officer by the backend. Owner: Person C.
 import { redirect } from "next/navigation";
-import { getMe, apiFetch, BACKEND_URL, type Packet } from "@/lib/api";
+import { getMe, apiFetch, BACKEND_URL, type QueueItem } from "@/lib/api";
 import { approve } from "@/app/actions";
 import Header from "@/components/Header";
 import ApproveButton from "@/components/ApproveButton";
+import RequestPacketCard from "@/components/RequestPacketCard";
 
 export default async function QueuePage() {
   const me = await getMe();
   if (!me) redirect("/login"); // token expired/invalid
 
   const res = await apiFetch("/verifications");
-  const packets: Packet[] = res.ok ? await res.json() : [];
+  const packets: QueueItem[] = res.ok ? await res.json() : [];
 
   return (
     <div className="min-h-screen bg-paper">
@@ -32,7 +33,10 @@ export default async function QueuePage() {
           </div>
         )}
 
-        {packets.map((p) => (
+        {packets.map((p) =>
+          p.kind === "request" ? (
+            <RequestPacketCard key={p.id} p={p} />
+          ) : (
           <article key={p.id} className="overflow-hidden rounded-2xl border border-line bg-card shadow-sm">
             <div className="flex items-start justify-between gap-4 border-b border-line px-5 py-4">
               <div className="space-y-1">
@@ -107,7 +111,8 @@ export default async function QueuePage() {
               </details>
             )}
           </article>
-        ))}
+          ),
+        )}
       </main>
     </div>
   );
