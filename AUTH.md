@@ -69,7 +69,7 @@ server startup even without running the seed.
 
 ## Config (backend/.env)
 ```
-JWT_SECRET=<long random string>          # change in prod
+JWT_SECRET=e550686d496747bf917e65f7910fd3f4c510b405ab06b9113b83f7f4285e0443          # change in prod
 ACCESS_TOKEN_EXPIRE_MINUTES=720
 DATABASE_URL=sqlite:///./govpath.db      # git-ignored
 SUPERADMIN_NIC=199000000000

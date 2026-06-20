@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Author {
+  id    Int    @id @default(autoincrement())
+  name  String
+  books Book[]
+}
+
+model Book {
+  id        Int      @id @default(autoincrement())
+  title     String
+  createdAt DateTime @default(now())
+  authorId  Int
+  author    Author   @relation(fields: [authorId], references: [id])
+}
+
+model chat_message {
+  id         Int      @id @default(autoincrement())
+  session_id String   @db.VarChar
+  user_id    Int
+  role       String   @db.VarChar
+  content    String
+  plan       Json?    @db.Json
+  created_at DateTime @db.Timestamp(6)
+  user       user     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([session_id], map: "ix_chat_message_session_id")
+  @@index([user_id], map: "ix_chat_message_user_id")
+}
+
+model chat_session {
+  id         Int      @id @default(autoincrement())
+  session_id String   @unique(map: "ix_chat_session_session_id") @db.VarChar
+  user_id    Int
+  lang       String   @db.VarChar
+  state      Json     @db.Json
+  service    String?  @db.VarChar
+  office     String?  @db.VarChar
+  completed  Boolean
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+  user       user     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([user_id], map: "ix_chat_session_user_id")
+}
+
+model circular_chunk {
+  id        Int                    @id @default(autoincrement())
+  title     String                 @db.VarChar
+  source    String                 @db.VarChar
+  text      String
+  embedding Unsupported("vector")?
+}
+
+model user {
+  id              Int            @id @default(autoincrement())
+  kind            String         @db.VarChar
+  nic             String         @unique(map: "ix_user_nic") @db.VarChar
+  full_name       String         @db.VarChar
+  hashed_password String         @db.VarChar
+  role            String         @db.VarChar
+  services        String         @db.VarChar
+  jurisdiction    String?        @db.VarChar
+  is_active       Boolean
+  created_at      DateTime       @db.Timestamp(6)
+  chat_message    chat_message[]
+  chat_session    chat_session[]
+  verification    verification[]
+
+  @@index([kind], map: "ix_user_kind")
+}
+
+model verification {
+  id           Int       @id @default(autoincrement())
+  vid          String    @unique(map: "ix_verification_vid") @db.VarChar
+  session_id   String    @db.VarChar
+  user_id      Int?
+  service      String?   @db.VarChar
+  office       String?   @db.VarChar
+  plan         Json      @db.Json
+  approved     Boolean
+  officer_name String?   @db.VarChar
+  officer_nic  String?   @db.VarChar
+  created_at   DateTime  @db.Timestamp(6)
+  approved_at  DateTime? @db.Timestamp(6)
+  user         user?     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([approved], map: "ix_verification_approved")
+  @@index([session_id], map: "ix_verification_session_id")
+}

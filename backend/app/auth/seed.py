@@ -7,6 +7,10 @@
 All demo officers share the password 'changeme123' (override via SUPERADMIN_PASSWORD only
 for the super-admin). Change these before any real deployment.
 """
+from dotenv import load_dotenv
+
+load_dotenv()  # ensure DATABASE_URL (Postgres) is in effect when run standalone
+
 from sqlmodel import Session, select
 
 from app.db import engine, init_db
