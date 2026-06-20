@@ -6,6 +6,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["--prefix", "admin_web", "run", "dev"],
       "port": 3000
+    },
+    {
+      "name": "flutter_web",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "5000", "--directory", "mobile/build/web"],
+      "port": 5000
     }
   ]
 }
