@@ -1,0 +1,43 @@
+graph TD
+    classDef agent fill:#f3f0ff,stroke:#6c5ce7,stroke-width:2px,color:#2d3436;
+    classDef db fill:#dfe6e9,stroke:#636e72,stroke-width:2px,color:#2d3436;
+    classDef se fill:#ffeaa7,stroke:#fdcb6e,stroke-width:2px,color:#2d3436;
+    classDef ext fill:#e3fcef,stroke:#00b894,stroke-width:2px,color:#2d3436;
+    classDef sg fill:#f8f9fb,stroke:#a4b0be,stroke-width:1px,stroke-dasharray:5 5;
+
+    subgraph OFFLINE["Offline ingestion — python -m app.rag.vectorizer"]
+        PDFS["Gazette / circular PDFs<br/>backend/data/circulars"]:::ext --> VEC["Vectorizer<br/>chunk + embed"]:::agent
+        VEC --> CHROMA[("ChromaDB<br/>collection: circulars")]:::db
+    end
+    class OFFLINE sg;
+
+    START(["POST /chat<br/>Flutter app"]):::se --> INTAKE["intake<br/>ingest clarifying answer<br/>into user_context"]:::agent
+    INTAKE -. fresh .-> INTENT["intent<br/>en / Tanglish / Singlish"]:::agent
+    INTAKE -. resume .-> PERSO
+    INTAKE -. done .-> DONE(["reply + plan JSON"]):::se
+
+    INTENT --> CLS["classifier<br/>keyword + LLM -> service"]:::agent
+    CLS --> REQ["requirements<br/>RAG retrieval"]:::agent
+    CHROMA -. context .-> REQ
+    KB["knowledge.py<br/>static fallback"]:::db -. fallback .-> REQ
+    REQ --> PERSO["personalization<br/>clarifying Q&A +<br/>DS vs Kachcheri routing"]:::agent
+
+    PERSO -. "wait (needs_input)" .-> DONE
+    PERSO -. continue .-> GAP["gap_check<br/>checklist vs owned docs"]:::agent
+    GAP --> FORM["form_assistant<br/>pre-fill B63 / K35A -> PDF"]:::agent
+    FORM --> SCH["scheduler<br/>office + officer"]:::agent
+    SCH --> ACT["action_agent"]:::agent
+
+    subgraph LOOP["action_agent internal loop — archived birth/death only"]
+        DRAFT["Creator: draft affidavit"]:::agent -->|evaluate| EVAL["Evaluator: PASS or list fixes"]:::agent
+        EVAL -->|"revise (x2 max)"| DRAFT
+    end
+    class LOOP sg;
+    ACT -. delegates .-> LOOP
+
+    ACT --> VER["verifier<br/>assemble plan +<br/>queue packet"]:::agent
+    VER --> DONE
+    VER --> QUEUE[("VERIFICATIONS<br/>in-memory queue")]:::db
+
+    QUEUE -. "GET /verifications" .-> OFF["Officer<br/>Admin Web (HITL)"]:::ext
+    OFF -. "POST /verifications/{id}/approve" .-> QUEUE

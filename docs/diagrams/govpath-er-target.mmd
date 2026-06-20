@@ -1,0 +1,50 @@
+erDiagram
+    CITIZEN ||--o{ DOCUMENT : "uploads"
+    CITIZEN ||--o{ APPLICATION : "submits"
+    CIVIC_SERVICE ||--o{ APPLICATION : "categorizes"
+    APPLICATION ||--o{ ACTION_OUTPUT : "generates"
+    APPLICATION ||--|| APPOINTMENT : "schedules"
+
+    CITIZEN {
+        string citizen_id PK
+        string nic_number UK
+        string full_name
+        string residency_address
+        string district
+        date   d_o_b
+    }
+    DOCUMENT {
+        string document_id PK
+        string citizen_id FK
+        string file_name
+        string file_type
+        json   extraction_json
+    }
+    CIVIC_SERVICE {
+        string service_id PK
+        string service_name
+        string statutory_fee
+        string default_authority_tier "DS, Kachcheri"
+    }
+    APPLICATION {
+        string application_id PK
+        string citizen_id FK
+        string service_id FK
+        string current_status
+        string jurisdiction_tier
+        datetime date_created
+    }
+    ACTION_OUTPUT {
+        string output_id PK
+        string application_id FK
+        string output_type "Form K35A, Affidavit"
+        string compiled_text
+        string validation_score
+    }
+    APPOINTMENT {
+        string appointment_id PK
+        string application_id FK
+        string officer_role
+        string office_location
+        datetime scheduled_datetime
+    }
