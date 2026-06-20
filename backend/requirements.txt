@@ -4,7 +4,6 @@ langgraph
 langchain
 langchain-google-genai
 google-generativeai
-chromadb
 pydantic
 python-dotenv
 beautifulsoup4
@@ -13,6 +12,8 @@ pypdf
 pdfplumber
 reportlab
 sqlmodel
+psycopg[binary]
+pgvector
 bcrypt
 python-jose[cryptography]
 python-multipart
