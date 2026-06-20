@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import type { VerificationPacket } from "@/lib/types";
+import { resolveFileUrl } from "@/lib/api";
 import ServiceBadge from "./ServiceBadge";
 
 interface Props {
@@ -99,7 +100,7 @@ export default function PacketModal({
                 {plan.forms.map((form, i) => (
                   <li key={i}>
                     <a
-                      href={form.url}
+                      href={resolveFileUrl(form.url)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
