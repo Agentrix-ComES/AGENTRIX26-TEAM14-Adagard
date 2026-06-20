@@ -1,5 +1,6 @@
 // Animated "thinking…" bubble shown while awaiting /chat. Owner: Person B.
 import 'package:flutter/material.dart';
+import 'gov_lion.dart';
 
 class TypingIndicator extends StatefulWidget {
   final String label;
@@ -30,13 +31,14 @@ class _TypingIndicatorState extends State<TypingIndicator>
         Container(
           width: 26,
           height: 26,
+          padding: const EdgeInsets.all(3),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
               colors: [Color(0xFF173A5A), Color(0xFF1F4E79)],
             ),
             borderRadius: BorderRadius.circular(7),
           ),
-          child: const Icon(Icons.account_balance, size: 13, color: Colors.white),
+          child: const GovPathLion(size: 20, color: Colors.white),
         ),
         const SizedBox(width: 10),
         Container(

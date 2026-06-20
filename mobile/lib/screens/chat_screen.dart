@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 import '../l10n/app_strings.dart';
 import '../models/chat_message.dart';
 import '../services/api.dart';
+import '../widgets/gov_lion.dart';
 import '../widgets/language_selector.dart';
 import '../widgets/message_bubble.dart';
 import '../widgets/typing_indicator.dart';
@@ -171,7 +172,7 @@ class _GovAppBar extends StatelessWidget implements PreferredSizeWidget {
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
           ),
-          child: const Icon(Icons.account_balance, size: 16, color: Colors.white),
+          child: const GovPathLion(size: 22, color: Colors.white),
         ),
         const SizedBox(width: 10),
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -228,7 +229,7 @@ class _EmptyState extends StatelessWidget {
               ),
             ],
           ),
-          child: const Icon(Icons.account_balance, size: 52, color: Colors.white),
+          child: const GovPathLion(size: 52),
         ),
         const SizedBox(height: 24),
         const Text('GovPath',

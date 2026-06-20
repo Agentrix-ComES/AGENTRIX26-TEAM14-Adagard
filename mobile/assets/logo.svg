@@ -1,0 +1,57 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="GovPath">
+
+  <!-- ── BACKGROUND SEAL ── -->
+  <circle cx="50" cy="50" r="48" fill="#1F4E79"/>
+
+  <!-- Gold outer ring -->
+  <circle cx="50" cy="50" r="46.5" fill="none" stroke="#C8A04F" stroke-width="2.8"/>
+  <!-- Inner thin gold ring (double-ring seal effect) -->
+  <circle cx="50" cy="50" r="41.5" fill="none" stroke="#C8A04F" stroke-width="0.9" opacity="0.55"/>
+
+  <!-- ── GOVERNMENT BUILDING ── -->
+
+  <!-- Pediment (triangular gable roof) -->
+  <polygon points="29,46 50,26 71,46" fill="#C8A04F"/>
+  <!-- Small horizontal cap on peak -->
+  <rect x="47" y="25" width="6" height="2.5" rx="1" fill="#C8A04F"/>
+
+  <!-- Entablature (horizontal beam under pediment) -->
+  <rect x="27" y="46" width="46" height="5" rx="0.5" fill="white"/>
+
+  <!-- Three columns -->
+  <rect x="31" y="51"  width="7" height="19" rx="1.5" fill="white"/>
+  <rect x="46.5" y="51" width="7" height="19" rx="1.5" fill="white"/>
+  <rect x="62" y="51"  width="7" height="19" rx="1.5" fill="white"/>
+
+  <!-- Stylobate (column platform / top step) -->
+  <rect x="27" y="70" width="46" height="4" rx="0.5" fill="white"/>
+
+  <!-- Steps: progressively wider and fainter -->
+  <rect x="23" y="74" width="54" height="3.5" rx="0.5" fill="white" opacity="0.80"/>
+  <rect x="19" y="77.5" width="62" height="3.5" rx="0.5" fill="white" opacity="0.55"/>
+
+  <!-- ── NAVIGATION ROUTE ── -->
+  <!-- Three waypoint dots connected by dashed lines + destination arrowhead -->
+  <!-- Represents "we guide you from start to the right government office" -->
+
+  <!-- Origin dot -->
+  <circle cx="20" cy="88" r="3"   fill="#C8A04F"/>
+  <circle cx="20" cy="88" r="5.5" fill="#C8A04F" opacity="0.20"/>
+
+  <!-- Dashed segment 1 -->
+  <line x1="23.5" y1="88" x2="44" y2="88"
+        stroke="#C8A04F" stroke-width="2.2" stroke-dasharray="3.5 3" stroke-linecap="round"/>
+
+  <!-- Mid waypoint -->
+  <circle cx="50" cy="88" r="3"   fill="#C8A04F"/>
+
+  <!-- Dashed segment 2 -->
+  <line x1="53.5" y1="88" x2="72" y2="88"
+        stroke="#C8A04F" stroke-width="2.2" stroke-dasharray="3.5 3" stroke-linecap="round"/>
+
+  <!-- Destination arrowhead -->
+  <polygon points="71,84.2 80,88 71,91.8" fill="#C8A04F"/>
+  <!-- Destination glow ring -->
+  <circle cx="80" cy="88" r="5" fill="#C8A04F" opacity="0.18"/>
+
+</svg>

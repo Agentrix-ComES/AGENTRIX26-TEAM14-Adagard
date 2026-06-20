@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../l10n/app_strings.dart';
 import '../models/plan.dart';
 import '../services/api.dart' show kBaseUrlForLinks;
+import 'gov_lion.dart';
 
 class PlanCard extends StatelessWidget {
   final Plan plan;
@@ -42,13 +43,12 @@ class PlanCard extends StatelessWidget {
               ),
               child: Row(children: [
                 Container(
-                  padding: const EdgeInsets.all(6),
+                  padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(Icons.assignment_turned_in,
-                      color: Color(0xFFC8A04F), size: 18),
+                  child: const GovPathLion(size: 22, color: Colors.white),
                 ),
                 const SizedBox(width: 10),
                 Text(s.planTitle,

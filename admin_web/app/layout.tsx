@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ShieldCheckIcon } from "@/components/icons";
+import { GovPathLogoIcon } from "@/components/icons";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -48,7 +48,7 @@ export default function RootLayout({
             {/* Brand */}
             <div className="relative flex items-center gap-3.5">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15 ring-1 ring-inset ring-white/30 backdrop-blur-sm">
-                <ShieldCheckIcon className="h-6 w-6 text-white" />
+                <GovPathLogoIcon width={30} height={30} />
               </div>
               <div>
                 <h1 className="text-[18px] font-bold leading-tight tracking-tight">

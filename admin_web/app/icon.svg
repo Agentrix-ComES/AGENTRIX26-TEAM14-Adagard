@@ -1,0 +1,28 @@
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="GovPath">
+
+  <!-- Rounded-square background (navy) -->
+  <rect width="32" height="32" rx="7" fill="#1F4E79"/>
+
+  <!-- Gold border ring -->
+  <rect x="1.2" y="1.2" width="29.6" height="29.6" rx="5.8"
+        fill="none" stroke="#C8A04F" stroke-width="1.4"/>
+
+  <!-- ── BUILDING SILHOUETTE ── -->
+
+  <!-- Pediment (triangle roof) -->
+  <polygon points="4,14 16,4 28,14" fill="#C8A04F"/>
+
+  <!-- Three columns -->
+  <rect x="5"  y="14" width="5" height="11" rx="1" fill="white"/>
+  <rect x="13.5" y="14" width="5" height="11" rx="1" fill="white"/>
+  <rect x="22" y="14" width="5" height="11" rx="1" fill="white"/>
+
+  <!-- Base step -->
+  <rect x="3" y="25" width="26" height="3" rx="1" fill="white" opacity="0.85"/>
+
+  <!-- ── NAVIGATION DOT ROW ── -->
+  <circle cx="7"  cy="30" r="1.4" fill="#C8A04F"/>
+  <circle cx="16" cy="30" r="1.4" fill="#C8A04F"/>
+  <polygon points="23,28.2 27,30 23,31.8" fill="#C8A04F"/>
+
+</svg>

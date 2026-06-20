@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import '../l10n/app_strings.dart';
 import '../models/chat_message.dart';
+import 'gov_lion.dart';
 import 'plan_card.dart';
 
 class MessageBubble extends StatelessWidget {
@@ -26,13 +27,14 @@ class MessageBubble extends StatelessWidget {
               Container(
                 width: 26,
                 height: 26,
+                padding: const EdgeInsets.all(3),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [Color(0xFF173A5A), Color(0xFF1F4E79)],
                   ),
                   borderRadius: BorderRadius.circular(7),
                 ),
-                child: const Icon(Icons.account_balance, size: 13, color: Colors.white),
+                child: const GovPathLion(size: 20, color: Colors.white),
               ),
               const SizedBox(width: 6),
               const Text('GovPath',

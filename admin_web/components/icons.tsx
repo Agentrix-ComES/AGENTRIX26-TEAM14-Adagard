@@ -110,3 +110,66 @@ export const LayersIcon = (p: IconProps) => (
     <path d="m12 2 9 5-9 5-9-5 9-5zM3 12l9 5 9-5M3 17l9 5 9-5" />
   </svg>
 );
+
+/**
+ * GovPath logo — government building (columns + pediment) with a
+ * navigation route (waypoints + arrow) inside a circular navy seal.
+ * Concept: "the path through civic services".
+ * viewBox 0 0 100 100. Use width/height props to size.
+ */
+export const GovPathLogoIcon = ({
+  className,
+  width = 40,
+  height = 40,
+}: {
+  className?: string;
+  width?: number;
+  height?: number;
+}) => (
+  <svg
+    viewBox="0 0 100 100"
+    width={width}
+    height={height}
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+    aria-label="GovPath"
+    role="img"
+  >
+    {/* ── BACKGROUND SEAL ── */}
+    <circle cx="50" cy="50" r="48" fill="#1F4E79" />
+    <circle cx="50" cy="50" r="46.5" fill="none" stroke="#C8A04F" strokeWidth="2.8" />
+    <circle cx="50" cy="50" r="41.5" fill="none" stroke="#C8A04F" strokeWidth="0.9" opacity="0.55" />
+
+    {/* ── GOVERNMENT BUILDING ── */}
+    {/* Pediment */}
+    <polygon points="29,46 50,26 71,46" fill="#C8A04F" />
+    <rect x="47" y="25" width="6" height="2.5" rx="1" fill="#C8A04F" />
+    {/* Entablature */}
+    <rect x="27" y="46" width="46" height="5" rx="0.5" fill="white" />
+    {/* Three columns */}
+    <rect x="31"   y="51" width="7" height="19" rx="1.5" fill="white" />
+    <rect x="46.5" y="51" width="7" height="19" rx="1.5" fill="white" />
+    <rect x="62"   y="51" width="7" height="19" rx="1.5" fill="white" />
+    {/* Stylobate */}
+    <rect x="27" y="70" width="46" height="4" rx="0.5" fill="white" />
+    {/* Steps */}
+    <rect x="23" y="74"   width="54" height="3.5" rx="0.5" fill="white" opacity="0.80" />
+    <rect x="19" y="77.5" width="62" height="3.5" rx="0.5" fill="white" opacity="0.55" />
+
+    {/* ── NAVIGATION ROUTE ── */}
+    {/* Origin dot */}
+    <circle cx="20" cy="88" r="3"   fill="#C8A04F" />
+    <circle cx="20" cy="88" r="5.5" fill="#C8A04F" opacity="0.20" />
+    {/* Dashed segment 1 */}
+    <line x1="23.5" y1="88" x2="44" y2="88"
+      stroke="#C8A04F" strokeWidth="2.2" strokeDasharray="3.5 3" strokeLinecap="round" />
+    {/* Mid waypoint */}
+    <circle cx="50" cy="88" r="3" fill="#C8A04F" />
+    {/* Dashed segment 2 */}
+    <line x1="53.5" y1="88" x2="72" y2="88"
+      stroke="#C8A04F" strokeWidth="2.2" strokeDasharray="3.5 3" strokeLinecap="round" />
+    {/* Destination arrowhead */}
+    <polygon points="71,84.2 80,88 71,91.8" fill="#C8A04F" />
+    <circle cx="80" cy="88" r="5" fill="#C8A04F" opacity="0.18" />
+  </svg>
+);
