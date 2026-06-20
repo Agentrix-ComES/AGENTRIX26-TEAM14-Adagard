@@ -10,6 +10,17 @@ export const API_BASE =
 
 export const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK === "1";
 
+/**
+ * Resolve a backend-relative path (e.g. "/files/B63_xx.pdf") to an absolute URL
+ * against the API host, so form/file links open from the backend (:8000) rather
+ * than the admin portal origin (:3000). Already-absolute URLs pass through.
+ */
+export function resolveFileUrl(url: string): string {
+  if (/^https?:\/\//i.test(url)) return url;
+  if (url.startsWith("/")) return `${API_BASE}${url}`;
+  return url;
+}
+
 // Small delay so mock mode feels like a real network round-trip (loading states, etc.).
 function delay<T>(value: T, ms = 350): Promise<T> {
   return new Promise((resolve) => setTimeout(() => resolve(value), ms));
