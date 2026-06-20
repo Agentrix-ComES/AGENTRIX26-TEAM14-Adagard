@@ -1,0 +1,14 @@
+name: govpath
+description: GovPath citizen service navigator.
+publish_to: 'none'
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.0
+  uuid: ^4.0.0
+  flutter_localizations:
+    sdk: flutter
+flutter:
+  uses-material-design: true

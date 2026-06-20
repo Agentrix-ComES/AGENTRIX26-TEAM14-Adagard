@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+langgraph
+langchain
+langchain-google-genai
+google-generativeai
+chromadb
+pydantic
+python-dotenv
+beautifulsoup4
+requests
+pypdf
+pdfplumber
