@@ -4,12 +4,14 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/chat_response.dart';
 
-/// Default base URL.
-/// - Android emulator reaches the host machine via 10.0.2.2.
-/// - For web/desktop/iOS-sim use http://localhost:8000.
-/// Override at build time with: --dart-define=API_BASE_URL=http://192.168.x.x:8000
-const String _kDefaultBaseUrl =
-    String.fromEnvironment('API_BASE_URL', defaultValue: 'http://10.0.2.2:8000');
+/// Default base URL — the deployed backend on Render.
+/// Override at build time for local dev, e.g.:
+///   --dart-define=API_BASE_URL=http://10.0.2.2:8000     (Android emulator -> host)
+///   --dart-define=API_BASE_URL=http://localhost:8000    (web/desktop/iOS-sim)
+const String _kDefaultBaseUrl = String.fromEnvironment(
+  'API_BASE_URL',
+  defaultValue: 'https://govpath-backend.onrender.com',
+);
 
 /// Public base URL used to resolve relative form/citation paths
 /// (e.g. "/files/b63.pdf") into absolute, launchable links.
@@ -25,7 +27,8 @@ class ApiException implements Exception {
 }
 
 class GovPathApi {
-  GovPathApi({String? baseUrl, http.Client? client, this.timeout = const Duration(seconds: 30)})
+  // 60s default: Render's free tier can cold-start (~30-60s) on the first request.
+  GovPathApi({String? baseUrl, http.Client? client, this.timeout = const Duration(seconds: 60)})
       : baseUrl = baseUrl ?? _kDefaultBaseUrl,
         _client = client ?? http.Client();
 
