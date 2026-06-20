@@ -1,0 +1,24 @@
+# Render Blueprint for the GovPath backend (FastAPI + LangGraph).
+# Deploy: push to GitHub, then Render Dashboard -> New -> Blueprint -> pick this repo.
+# Docs: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: govpath-backend
+    runtime: python
+    plan: free
+    rootDir: backend                       # the app lives in backend/, not repo root
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"                     # well-supported wheels for chromadb/onnxruntime
+      - key: GEMINI_API_KEY
+        sync: false                         # set this secret in the Render dashboard
+      - key: LLM_MODEL
+        value: gemini-2.5-flash
+      - key: CHROMA_DIR
+        value: /tmp/chroma_db               # ephemeral; rebuilt on each boot (fallback covers empty)
+      - key: FILES_DIR
+        value: /tmp/govpath_files           # generated form PDFs (ephemeral)

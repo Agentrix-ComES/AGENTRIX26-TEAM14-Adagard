@@ -1,0 +1,40 @@
+<!doctype html><html><head><meta charset="utf-8"><title>GovPath graph</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script></head>
+<body style="font-family:sans-serif;padding:24px"><h2>GovPath LangGraph</h2>
+<pre class="mermaid">---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	intake(intake)
+	intent(intent)
+	classifier(classifier)
+	requirements(requirements)
+	personalization(personalization)
+	gap_check(gap_check)
+	form_assistant(form_assistant)
+	scheduler(scheduler)
+	action_agent(action_agent)
+	verifier(verifier)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> intake;
+	action_agent --> verifier;
+	classifier --> requirements;
+	form_assistant --> scheduler;
+	gap_check --> form_assistant;
+	intake -. &nbsp;done&nbsp; .-> __end__;
+	intake -. &nbsp;fresh&nbsp; .-> intent;
+	intake -. &nbsp;resume&nbsp; .-> personalization;
+	intent --> classifier;
+	personalization -. &nbsp;wait&nbsp; .-> __end__;
+	personalization -. &nbsp;continue&nbsp; .-> gap_check;
+	requirements --> personalization;
+	scheduler --> action_agent;
+	verifier --> __end__;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc
+</pre>
+<script>mermaid.initialize({startOnLoad:true});</script></body></html>

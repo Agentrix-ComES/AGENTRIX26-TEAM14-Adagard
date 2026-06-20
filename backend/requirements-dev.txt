@@ -1,0 +1,7 @@
+# Dev-only tools — NOT needed to run or deploy the API. Kept out of requirements.txt
+# so the Render build stays lean.
+#
+#   uv pip install -r requirements-dev.txt
+#   langgraph dev            # opens LangGraph Studio against ./langgraph.json
+#
+langgraph-cli[inmem]

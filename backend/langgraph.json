@@ -1,0 +1,7 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "govpath": "./app/graph/graph.py:GRAPH"
+  },
+  "env": ".env"
+}

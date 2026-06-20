@@ -152,6 +152,31 @@ This is the wasted-trip the app prevents and the centerpiece of the demo.
 
 ---
 
+## 3b. Visualizing the graph (optional — LangGraph Studio)
+
+We use LangGraph as a **library**: the graph is built and `.invoke()`-d directly inside
+FastAPI (`graph.py`). It needs **no `langgraph.json`, no CLI, and no LangSmith key** to run —
+the only key the app uses is `GEMINI_API_KEY`.
+
+`langgraph dev` + **LangGraph Studio** is a *separate, optional* tool just for visualizing and
+stepping through the graph. Files for it are included (`langgraph.json`, `requirements-dev.txt`):
+
+```bash
+cd backend
+uv pip install -r requirements-dev.txt     # installs langgraph-cli[inmem] (dev only)
+langgraph dev                              # local server on :2024
+# Studio UI: https://smith.langchain.com/studio/?baseUrl=http://127.0.0.1:2024
+```
+
+`LANGSMITH_API_KEY` is **optional** (only for cloud tracing) — the local in-memory dev server
+runs without it. The dev server is *not* part of the deployment; it's never installed on Render.
+
+Quick static diagram instead (no server, no key):
+```bash
+PYTHONPATH=. .venv/bin/python -c "from app.graph.graph import GRAPH; print(GRAPH.get_graph().draw_mermaid())"
+```
+Paste the output into https://mermaid.live to see the nodes and conditional edges.
+
 ## 4. Resilience / graceful degradation
 
 Every LLM call goes through `app/graph/agents/_llm.ask()`, which returns `""` on **any**
