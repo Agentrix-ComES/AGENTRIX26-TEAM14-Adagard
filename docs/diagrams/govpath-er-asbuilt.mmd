@@ -1,0 +1,68 @@
+erDiagram
+    SERVICE_INFO ||--o{ SESSION : "classifies"
+    SESSION ||--|| USER_CONTEXT : "collects"
+    SESSION ||--o| VERIFICATION : "queues on completion"
+    VERIFICATION ||--|| PLAN : "wraps"
+    PLAN ||--o{ FORM : "includes"
+    PLAN ||--o{ DRAFT_DOC : "includes"
+    PLAN ||--o{ CITATION : "cites"
+    CIRCULAR_CHUNK ||--o{ CITATION : "source of"
+
+    SESSION {
+        string session_id PK
+        string lang "en, tanglish, singlish"
+        string intent
+        string service FK "to SERVICE_INFO"
+        string office "DS or Kachcheri"
+        string officer
+        int    record_age_years
+        bool   needs_input
+        string awaiting "key being asked for"
+        bool   completed
+        string reply
+    }
+    USER_CONTEXT {
+        string session_id FK
+        int    record_age_years
+        bool   dual_citizen
+        json   documents "docs the citizen has"
+    }
+    VERIFICATION {
+        string verification_id PK
+        string session_id FK
+        string service
+        bool   approved
+        string officer "set on approve"
+    }
+    PLAN {
+        string office
+        string officer
+        json   checklist
+    }
+    FORM {
+        string name "B63, K35A, DRP1, GN-1, DMT-LIC"
+        string url "files path to the PDF"
+    }
+    DRAFT_DOC {
+        string type "affidavit"
+        string content
+    }
+    CITATION {
+        string title
+        string source
+    }
+    CIRCULAR_CHUNK {
+        string chunk_id PK
+        string text "embedded chunk"
+        string title "metadata"
+        string source "metadata"
+    }
+    SERVICE_INFO {
+        string service_key PK
+        string label
+        string default_office
+        string officer
+        string form_code
+        json   checklist
+        json   citation
+    }
