@@ -1,16 +1,14 @@
-"""Appointment Scheduler — names the exact officer/desk. Owner: Person A."""
-from app.graph.state import GraphState
+"""Appointment Scheduler — names the exact office and officer/desk. Owner: Person A.
 
-OFFICER = {
-    "birth_cert": "Additional District Registrar",
-    "death_cert": "Additional District Registrar",
-    "gn_cert": "Grama Niladhari",
-    "nic": "DRP Officer",
-    "passport": "Immigration Officer",
-    "license": "Examiner (DMT)",
-}
+Pulls the officer/office from the knowledge base. ``office`` may already be set by the
+personalization agent (DS-vs-Kachcheri routing for birth/death) — that takes precedence.
+"""
+from app.graph.state import GraphState
+from app.graph import knowledge
+
 
 def run(state: GraphState) -> GraphState:
-    state["officer"] = OFFICER.get(state.get("service"), "Counter Officer")
-    state.setdefault("office", state.get("office", "Divisional Secretariat"))
+    info = knowledge.info(state.get("service"))
+    state["officer"] = info["officer"]
+    state["office"] = state.get("office") or info["office"]
     return state

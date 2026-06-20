@@ -1,0 +1,11 @@
+# Python / uv
+.venv/
+__pycache__/
+*.pyc
+
+# Secrets
+.env
+
+# Generated at runtime
+chroma_db/
+files/
