@@ -26,12 +26,28 @@ class Citation {
       );
 }
 
+/// A drafted supporting document (e.g. an affidavit) the agent prepared.
+class DraftDoc {
+  final String type;
+  final String content;
+
+  const DraftDoc({required this.type, required this.content});
+
+  factory DraftDoc.fromJson(Map<String, dynamic> json) => DraftDoc(
+        type: (json['type'] ?? '').toString(),
+        content: (json['content'] ?? '').toString(),
+      );
+
+  bool get isEmpty => type.trim().isEmpty && content.trim().isEmpty;
+}
+
 /// The actionable plan returned once the agent graph is complete.
 class Plan {
   final String? office;
   final String? officer;
   final List<String> checklist;
   final List<FormDoc> forms;
+  final List<DraftDoc> draftDocs;
   final List<Citation> citations;
 
   const Plan({
@@ -39,6 +55,7 @@ class Plan {
     this.officer,
     this.checklist = const [],
     this.forms = const [],
+    this.draftDocs = const [],
     this.citations = const [],
   });
 
@@ -47,6 +64,10 @@ class Plan {
         officer: json['officer']?.toString(),
         checklist: _stringList(json['checklist']),
         forms: _objList(json['forms']).map(FormDoc.fromJson).toList(),
+        draftDocs: _objList(json['draft_docs'])
+            .map(DraftDoc.fromJson)
+            .where((d) => !d.isEmpty)
+            .toList(),
         citations: _objList(json['citations']).map(Citation.fromJson).toList(),
       );
 
@@ -55,6 +76,7 @@ class Plan {
       (officer == null || officer!.isEmpty) &&
       checklist.isEmpty &&
       forms.isEmpty &&
+      draftDocs.isEmpty &&
       citations.isEmpty;
 
   static List<String> _stringList(dynamic v) =>

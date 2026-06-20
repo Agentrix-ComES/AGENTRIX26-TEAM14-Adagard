@@ -59,6 +59,12 @@ class PlanCard extends StatelessWidget {
                     .toList(),
               ),
             ],
+            if (plan.draftDocs.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              _SectionHeader(icon: Icons.article_outlined, title: s.draftDocs),
+              const SizedBox(height: 4),
+              ...plan.draftDocs.map((d) => _DraftDocTile(doc: d)),
+            ],
             if (plan.citations.isNotEmpty) ...[
               const SizedBox(height: 12),
               _SectionHeader(icon: Icons.menu_book_outlined, title: s.citations),
@@ -205,6 +211,49 @@ class _CitationItem extends StatelessWidget {
             ]),
           ),
         ]),
+      ),
+    );
+  }
+}
+
+/// A drafted document (e.g. an affidavit). Content can be long, so it is
+/// collapsed by default and expands inline; text is selectable for copying.
+class _DraftDocTile extends StatelessWidget {
+  final DraftDoc doc;
+  const _DraftDocTile({required this.doc});
+
+  String get _prettyType {
+    final t = doc.type.replaceAll('_', ' ').trim();
+    if (t.isEmpty) return 'Document';
+    return '${t[0].toUpperCase()}${t.substring(1)}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      // Hide the default ExpansionTile divider lines for a cleaner card.
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          dense: true,
+          tilePadding: const EdgeInsets.symmetric(horizontal: 12),
+          childrenPadding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+          leading: Icon(Icons.description_outlined, size: 18, color: scheme.primary),
+          title: Text(_prettyType,
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+          children: [
+            SelectableText(
+              doc.content,
+              style: const TextStyle(fontSize: 12, height: 1.35),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -32,6 +32,7 @@ class AppStrings {
   final String officer;
   final String checklist;
   final String forms;
+  final String draftDocs;
   final String citations;
   final String openForm;
   final String linkError;
@@ -49,6 +50,7 @@ class AppStrings {
     required this.officer,
     required this.checklist,
     required this.forms,
+    required this.draftDocs,
     required this.citations,
     required this.openForm,
     required this.linkError,
@@ -71,6 +73,7 @@ class AppStrings {
       officer: 'Officer',
       checklist: 'Checklist',
       forms: 'Forms',
+      draftDocs: 'Draft Documents',
       citations: 'Sources',
       openForm: 'Open form',
       linkError: 'Could not open the link.',
@@ -89,6 +92,7 @@ class AppStrings {
       officer: 'Adhikari',
       checklist: 'Sari paarkkum pattiyal',
       forms: 'Padivangal',
+      draftDocs: 'Varaivu aavanangal',
       citations: 'Aadharangal',
       openForm: 'Padivathai thira',
       linkError: 'Inaippai thira mudiyavillai.',
@@ -107,6 +111,7 @@ class AppStrings {
       officer: 'Niladhaariya',
       checklist: 'Piriksum lehisthuwa',
       forms: 'Forms',
+      draftDocs: 'Ketumpath lekhana',
       citations: 'Moolashra',
       openForm: 'Form eka arinna',
       linkError: 'Link eka arinna bari una.',
