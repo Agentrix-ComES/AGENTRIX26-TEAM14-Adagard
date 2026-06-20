@@ -11,12 +11,18 @@ type FormState = { error?: string; ok?: boolean } | null;
 export async function login(_prev: FormState, formData: FormData): Promise<FormState> {
   const nic = String(formData.get("nic") ?? "").trim();
   const password = String(formData.get("password") ?? "");
-  const res = await fetch(`${BACKEND_URL}/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ nic, password }),
-    cache: "no-store",
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${BACKEND_URL}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nic, password }),
+      cache: "no-store",
+    });
+  } catch {
+    // network/unreachable backend — return a clean message instead of a 500
+    return { error: `Cannot reach the backend (${BACKEND_URL}). Set BACKEND_URL / NEXT_PUBLIC_API_BASE on the host.` };
+  }
   if (!res.ok) {
     const d = await res.json().catch(() => ({}));
     return { error: d.detail ?? "Login failed" };

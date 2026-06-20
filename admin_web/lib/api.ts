@@ -2,7 +2,9 @@
 // Owner: Person C. The token lives in an httpOnly cookie (set in app/actions.ts).
 import { cookies } from "next/headers";
 
-export const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8000";
+// Accept either name (server-only BACKEND_URL or the NEXT_PUBLIC_API_BASE used in .env.example).
+export const BACKEND_URL =
+  process.env.BACKEND_URL ?? process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8000";
 export const TOKEN_COOKIE = "govpath_token";
 
 export type Me = {
@@ -50,8 +52,12 @@ export async function apiFetch(path: string, init: RequestInit = {}): Promise<Re
 }
 
 export async function getMe(): Promise<Me | null> {
-  const res = await apiFetch("/auth/me");
-  return res.ok ? ((await res.json()) as Me) : null;
+  try {
+    const res = await apiFetch("/auth/me");
+    return res.ok ? ((await res.json()) as Me) : null;
+  } catch {
+    return null; // backend unreachable — treat as logged out (proxy redirects to /login)
+  }
 }
 
 // --- Full agentic-flow packet (kind === "request") ---
