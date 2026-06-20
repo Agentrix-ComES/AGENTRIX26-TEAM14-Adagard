@@ -13,3 +13,6 @@ class ChatResponse(BaseModel):
     needs_input: bool = False
     service: Optional[str] = None
     plan: Optional[Dict[str, Any]] = None
+
+class ApproveRequest(BaseModel):
+    officer: str
